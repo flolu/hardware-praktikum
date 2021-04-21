@@ -108,12 +108,46 @@ __global__ void bwKernel(unsigned char* img_in, unsigned char* img_out, int widt
   }
 }
 
+__device__ get_address(int i, int j) {
+  return (i + j*width) * 4;
+}
+
 __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
+  int i = threadIdx.x+blockIdx.x*blockDim.x;
+  int j = threadIdx.y+blockIdx.y*blockDim.y;
 
-   //TODO: Aufgabe 2.5 Kantendetektion mit Sobelfilter Kernel implementieren
-   //Kommentieren Sie die folgenden Anweisungen aus um die SX und SY Arrays zu erhalten
-   //const float SX[3][3]={{-1,0,1},{-2,0,2},{-1,0,1}};
-   //const float SY[3][3]={{-1,-2,-1},{0,0,0},{1,2,1}};
+  if (i<width && j<height)
+  {
+    int adrIn=(i+j*width)*4;
+    int adrOut=adrIn;
+    unsigned char r,g,b,a;
+    r = img_in[adrIn+0];
+    g = img_in[adrIn+1];
+    b = img_in[adrIn+2];
+    a = img_in[adrIn+3];
 
+    const float SY[3][3]={{-1,-2,-1},{0,0,0},{1,2,1}};
+    float horizontal = 0;
+    for (int k = -1; k <= 1; k++) {
+      for (int l = -1; l <= 1; l++) {
+        horizontal += SY[1+k][1+l] * get_address(i+k, j+l);
+      }
+    }
+
+    const float SX[3][3]={{-1,0,1},{-2,0,2},{-1,0,1}};
+    float vertical = 0;
+    for (int k = -1; k <= 1; k++) {
+      for (int l = -1; l <= 1; l++) {
+        vertical += SX[1+k][1+l] * get_address(i+k, j+l);
+      }
+    }
+
+    float color = sqrt(horizontal*horizontal, vertical*vertical);
+
+    img_out[adrOut+0] = color;
+    img_out[adrOut+1] = color;
+    img_out[adrOut+2] = color;
+    img_out[adrOut+3] = a;
+  }
 }
