@@ -1,10 +1,10 @@
-ARCH= --compiler-bindir clang-8
+ARCH= -gencode arch=compute_35,code=sm_35 -gencode arch=compute_75,code=sm_75
 
 all:
 	nvcc ${ARCH} -o cuda-prak main.cu -lpng
 
 perf:
-	nvcc -O3 ${ARCH} -o cuda-perf perf.cu -lpng
+	nvcc -O3 ${ARCH} -o cuda-perf perf.cu -lpng 
 
 perf-int:
 	nvcc -O3 ${ARCH} -o cuda-perf-int perf.cu -lpng -DUSEINT
