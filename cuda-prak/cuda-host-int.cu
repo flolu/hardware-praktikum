@@ -53,7 +53,7 @@ void linearTransformCuda(unsigned int* img_in, unsigned int* img_out, int width,
 
 void bwCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)
 {
-  /*  unsigned int *img_in_dev, *img_out_dev;
+   unsigned int *img_in_dev, *img_out_dev;
    int size=width*height;
    cudaMalloc((void**)&img_in_dev,size*sizeof(unsigned int));
    cudaMalloc((void**)&img_out_dev,size*sizeof(unsigned int));
@@ -63,7 +63,7 @@ void bwCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)
    bwKernel<<<grid,threads>>>(img_in_dev,img_out_dev,width,height);
    cudaMemcpy(img_out,img_out_dev,size*sizeof(unsigned int),cudaMemcpyDeviceToHost);
    cudaFree(img_in_dev);
-   cudaFree(img_out_dev); */
+   cudaFree(img_out_dev);
 }
 
 void sobelCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)

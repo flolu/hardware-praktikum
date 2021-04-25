@@ -56,19 +56,18 @@ __global__ void mirrorKernel(unsigned int* img_in, unsigned int* img_out, int wi
   {
     int adrIn=i+j*width;
     int adrOut=adrIn;
-    unsigned char r, g, b, a;
 
-    int color;
+    unsigned int color;
     if (i >= width/2) {
       color = img_in[(width - i) + j * width];
     } else {
       color = img_in[adrIn];
     }
 
-    r = getR(color);
-    g = getG(color);
-    b = getB(color);
-    a = getA(color);
+    unsigned int r = getR(color);
+    unsigned int g = getG(color);
+    unsigned int b = getB(color);
+    unsigned int a = getA(color);
 
     img_out[adrOut] = output(r,g,b,a);
   }
@@ -76,7 +75,18 @@ __global__ void mirrorKernel(unsigned int* img_in, unsigned int* img_out, int wi
 
 __global__ void bwKernel(unsigned int* img_in, unsigned int* img_out, int width, int height)
 {
-   //TODO: Graubild erstellen
+  int i = threadIdx.x+blockIdx.x*blockDim.x;
+  int j = threadIdx.y+blockIdx.y*blockDim.y;
+
+  if (i<width && j<height)
+  {
+     int adrIn=i+j*width;
+     int adrOut=adrIn;
+     unsigned int color = img_in[adrIn];
+     unsigned int a = getA(color);
+     unsigned char grey = (getR(color) + getG(color) + getB(color)) / 3;
+     img_out[adrOut] = output(grey, grey, grey, a);
+  }
 }
 
 __global__ void sobelKernel(unsigned int* img_in, unsigned int* img_out, int width, int height)
