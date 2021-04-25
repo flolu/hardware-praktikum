@@ -11,7 +11,7 @@ __global__ void copyImgKernel(unsigned int* img_in, unsigned int* img_out, int w
 
    if (i<width && j<height)
    {
-      int adrIn=(i+j*width);
+      int adrIn=i+j*width;
       int adrOut=adrIn;
       unsigned int color = img_in[adrIn];
       unsigned int r = getR(color);
@@ -35,7 +35,7 @@ __global__ void linearTransformKernel(unsigned int* img_in, unsigned int* img_ou
 
    if (i<width && j<height)
    {
-      int adrIn=(i+j*width);
+      int adrIn=i+j*width;
       int adrOut=adrIn;
       unsigned int color = img_in[adrIn];
       unsigned int r = checkOverflow(alpha * getR(color) + beta);
@@ -49,7 +49,29 @@ __global__ void linearTransformKernel(unsigned int* img_in, unsigned int* img_ou
 
 __global__ void mirrorKernel(unsigned int* img_in, unsigned int* img_out, int width, int height)
 {
-   //TODO: Spiegeln
+  int i = threadIdx.x+blockIdx.x*blockDim.x;
+  int j = threadIdx.y+blockIdx.y*blockDim.y;
+
+  if (i<width && j<height)
+  {
+    int adrIn=i+j*width;
+    int adrOut=adrIn;
+    unsigned char r, g, b, a;
+
+    int color;
+    if (i >= width/2) {
+      color = img_in[(width - i) + j * width];
+    } else {
+      color = img_in[adrIn];
+    }
+
+    r = getR(color);
+    g = getG(color);
+    b = getB(color);
+    a = getA(color);
+
+    img_out[adrOut] = output(r,g,b,a);
+  }
 }
 
 __global__ void bwKernel(unsigned int* img_in, unsigned int* img_out, int width, int height)
