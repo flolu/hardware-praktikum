@@ -1,5 +1,3 @@
-#include <math.h>
-
 __global__ void copyImgKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
    int i = threadIdx.x+blockIdx.x*blockDim.x;
@@ -110,10 +108,6 @@ __global__ void bwKernel(unsigned char* img_in, unsigned char* img_out, int widt
   }
 }
 
-__device__ int get_address(int i, int j, int width) {
-  return (i + j*width) * 4;
-}
-
 __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
   int i = threadIdx.x+blockIdx.x*blockDim.x;
@@ -129,7 +123,8 @@ __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int w
     float horizontal = 0;
     for (int k = -1; k <= 1; k++) {
       for (int l = -1; l <= 1; l++) {
-        horizontal += SY[1+k][1+l] * img_in[get_address(i+k, j+l, width)];
+        int adr = (i+k + (j+l)*width) * 4;
+        horizontal += SY[1+k][1+l] * img_in[adr];
       }
     }
 
@@ -137,11 +132,12 @@ __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int w
     float vertical = 0;
     for (int k = -1; k <= 1; k++) {
       for (int l = -1; l <= 1; l++) {
-        vertical += SX[1+k][1+l] * img_in[get_address(i+k, j+l, width)];
+        int adr = (i+k + (j+l)*width) * 4;
+        vertical += SX[1+k][1+l] * img_in[adr];
       }
     }
 
-    float color = sqrtf(horizontal*horizontal + vertical*vertical);
+    float color = sqrt(horizontal*horizontal + vertical*vertical);
 
     img_out[adrOut+0] = color;
     img_out[adrOut+1] = color;
