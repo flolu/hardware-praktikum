@@ -23,10 +23,9 @@ __global__ void copyImgKernel(unsigned int* img_in, unsigned int* img_out, int w
    }
 }
 
-__device__ unsigned int checkOverflow(float value) {
-  unsigned char byte = (unsigned char) value;
-  if (byte > 255) return 255;
-  return (unsigned int)byte;
+__device__ unsigned char checkOverflow(float value) {
+  if (value > 255) return 255;
+  return (unsigned char)value;
 }
 
 __global__ void linearTransformKernel(unsigned int* img_in, unsigned int* img_out, int width, int height, float alpha, float beta)

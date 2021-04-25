@@ -39,7 +39,7 @@ void mirrorCuda(unsigned int* img_in, unsigned int* img_out, int width, int heig
 void linearTransformCuda(unsigned int* img_in, unsigned int* img_out, int width, int height,float alpha, float beta)
 {
    unsigned int *img_in_dev, *img_out_dev;
-   int size=width*height*4;
+   int size=width*height;
    cudaMalloc((void**)&img_in_dev,size*sizeof(unsigned int));
    cudaMalloc((void**)&img_out_dev,size*sizeof(unsigned int));
    dim3 threads(16,16);
