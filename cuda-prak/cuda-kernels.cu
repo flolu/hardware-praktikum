@@ -118,30 +118,30 @@ __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int w
     int adrIn=(i+j*width)*4;
     int adrOut=adrIn;
     unsigned char a = img_in[adrIn+3];
+    unsigned char color_byte = 0;
 
-    const float SY[3][3]={{-1,-2,-1},{0,0,0},{1,2,1}};
-    float horizontal = 0;
-    for (int k = -1; k <= 1; k++) {
-      for (int l = -1; l <= 1; l++) {
-        int adr = (i+k + (j+l)*width) * 4;
-        horizontal += SY[1+k][1+l] * img_in[adr];
+    if (i > 0 && i < width - 1 && j > 0 && j < height - 1) {
+      const float SY[3][3]={{-1,-2,-1},{0,0,0},{1,2,1}};
+      const float SX[3][3]={{-1,0,1},{-2,0,2},{-1,0,1}};
+
+      float horizontal = 0;
+      float vertical = 0;
+      for (int k = -1; k <= 1; k++) {
+        for (int l = -1; l <= 1; l++) {
+          int adr = (i+k + (j+l)*width) * 4;
+          horizontal += SY[1+k][1+l] * img_in[adr];
+          vertical += SX[1+k][1+l] * img_in[adr];
+        }
       }
+
+      float color = sqrt(horizontal*horizontal + vertical*vertical);
+      if (color > 255) color = 255;
+      color_byte = (unsigned char)color;
     }
 
-    const float SX[3][3]={{-1,0,1},{-2,0,2},{-1,0,1}};
-    float vertical = 0;
-    for (int k = -1; k <= 1; k++) {
-      for (int l = -1; l <= 1; l++) {
-        int adr = (i+k + (j+l)*width) * 4;
-        vertical += SX[1+k][1+l] * img_in[adr];
-      }
-    }
-
-    float color = sqrt(horizontal*horizontal + vertical*vertical);
-
-    img_out[adrOut+0] = color;
-    img_out[adrOut+1] = color;
-    img_out[adrOut+2] = color;
+    img_out[adrOut+0] = color_byte;
+    img_out[adrOut+1] = color_byte;
+    img_out[adrOut+2] = color_byte;
     img_out[adrOut+3] = a;
   }
 }
