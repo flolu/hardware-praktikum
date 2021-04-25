@@ -20,9 +20,8 @@ __global__ void copyImgKernel(unsigned char* img_in, unsigned char* img_out, int
    }
 }
 
-__device__ float clamp_color(float color){
+__device__ unsigned char clamp_color(unsigned char color){
   if (color > 255) return 255;
-  if (color < 0) return 0;
   return color;
 }
 
@@ -57,30 +56,25 @@ __global__ void mirrorKernel(unsigned char* img_in, unsigned char* img_out, int 
   {
     int adrIn=(i+j*width)*4;
     int adrOut=adrIn;
-    unsigned char r,g,b,a;
-    r = img_in[adrIn+0];
-    g = img_in[adrIn+1];
-    b = img_in[adrIn+2];
-    a = img_in[adrIn+3];
-
-    int adrMirrored = ((width - i) + j * width) * 4;
-
-    float r_new = r;
-    float g_new = g;
-    float b_new = b;
-    float a_new = a;
+    unsigned char r, g, b, a;
 
     if (i >= width/2) {
-      r_new = img_in[adrMirrored+0];
-      g_new = img_in[adrMirrored+1];
-      b_new = img_in[adrMirrored+2];
-      a_new = img_in[adrMirrored+3];
+      int adrMirrored = ((width - i) + j * width) * 4;
+      r = img_in[adrMirrored+0];
+      g = img_in[adrMirrored+1];
+      b = img_in[adrMirrored+2];
+      a = img_in[adrMirrored+3];
+    } else {
+      r = img_in[adrIn+0];
+      g = img_in[adrIn+1];
+      b = img_in[adrIn+2];
+      a = img_in[adrIn+3];
     }
 
-    img_out[adrOut+0] = r_new;
-    img_out[adrOut+1] = g_new;
-    img_out[adrOut+2] = b_new;
-    img_out[adrOut+3] = a_new;
+    img_out[adrOut+0] = r;
+    img_out[adrOut+1] = g;
+    img_out[adrOut+2] = b;
+    img_out[adrOut+3] = a;
   }
 }
 
@@ -99,7 +93,7 @@ __global__ void bwKernel(unsigned char* img_in, unsigned char* img_out, int widt
      b = img_in[adrIn+2];
      a = img_in[adrIn+3];
 
-     float grey = (r+g+b) / 3;
+     unsigned char grey = (r+g+b) / 3;
 
      img_out[adrOut+0] = grey;
      img_out[adrOut+1] = grey;
@@ -129,8 +123,9 @@ __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int w
       for (int k = -1; k <= 1; k++) {
         for (int l = -1; l <= 1; l++) {
           int adr = (i+k + (j+l)*width) * 4;
-          horizontal += SY[1+k][1+l] * img_in[adr];
-          vertical += SX[1+k][1+l] * img_in[adr];
+          unsigned char c = img_in[adr];
+          horizontal += SY[1+k][1+l] * c;
+          vertical += SX[1+k][1+l] * c;
         }
       }
 
