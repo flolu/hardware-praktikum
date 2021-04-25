@@ -1,9 +1,5 @@
-//Host-Code für Aufgabe 3.2: Host-Code für die Verwendung von unsigned int
 #include "cuda.h"
 #include "cuda-kernels-int.cu"
-
-//Auskommentierter Code ist eine Kopie von cuda-host.cu
-//Überarbeiten Sie ihn für die Verwendung mit unsigned int!
 
 void copyImgCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)
 {
@@ -68,7 +64,7 @@ void bwCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)
 
 void sobelCuda(unsigned int* img_in, unsigned int* img_out, int width, int height)
 {
- /*   unsigned int *img_in_dev, *img_bw_dev, *img_out_dev;
+   unsigned int *img_in_dev, *img_bw_dev, *img_out_dev;
    int size=width*height;
    cudaMalloc((void**)&img_in_dev,size*sizeof(unsigned int));
    cudaMalloc((void**)&img_bw_dev,size*sizeof(unsigned int));
@@ -81,5 +77,5 @@ void sobelCuda(unsigned int* img_in, unsigned int* img_out, int width, int heigh
    cudaMemcpy(img_out,img_out_dev,size*sizeof(unsigned int),cudaMemcpyDeviceToHost);
    cudaFree(img_in_dev);
    cudaFree(img_out_dev);
-   cudaFree(img_bw_dev); */
+   cudaFree(img_bw_dev);
 }
