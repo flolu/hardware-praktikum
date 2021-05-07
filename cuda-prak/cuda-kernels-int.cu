@@ -14,12 +14,8 @@ __global__ void copyImgKernel(unsigned int* img_in, unsigned int* img_out, int w
       int adrIn=i+j*width;
       int adrOut=adrIn;
       unsigned int color = img_in[adrIn];
-      unsigned int r = getR(color);
-      unsigned int g = getG(color);
-      unsigned int b = getB(color);
-      unsigned int a = getA(color);
 
-      img_out[adrOut] = output(r,g,b,a);
+      img_out[adrOut] = output(getR(color),getG(color),getB(color),getA(color));
    }
 }
 
@@ -41,9 +37,8 @@ __global__ void linearTransformKernel(unsigned int* img_in, unsigned int* img_ou
       unsigned int r = checkOverflow(alpha * getR(color) + beta);
       unsigned int g = checkOverflow(alpha * getG(color) + beta);
       unsigned int b = checkOverflow(alpha * getB(color) + beta);
-      unsigned int a = getA(color);
 
-      img_out[adrOut] = output(r,g,b,a);
+      img_out[adrOut] = output(r,g,b,getA(color););
    }
  }
 
@@ -69,7 +64,7 @@ __global__ void mirrorKernel(unsigned int* img_in, unsigned int* img_out, int wi
     unsigned int b = getB(color);
     unsigned int a = getA(color);
 
-    img_out[adrOut] = output(r,g,b,a);
+    img_out[adrOut] = output(getR(color),getG(color),getB(color),getA(color));
   }
 }
 
@@ -83,9 +78,8 @@ __global__ void bwKernel(unsigned int* img_in, unsigned int* img_out, int width,
      int adrIn=i+j*width;
      int adrOut=adrIn;
      unsigned int color = img_in[adrIn];
-     unsigned int a = getA(color);
      unsigned char grey = (getR(color) + getG(color) + getB(color)) / 3;
-     img_out[adrOut] = output(grey, grey, grey, a);
+     img_out[adrOut] = output(grey, grey, grey, getA(color););
   }
 }
 
@@ -98,9 +92,7 @@ __global__ void sobelKernel(unsigned int* img_in, unsigned int* img_out, int wid
   {
     int adrIn=i+j*width;
     int adrOut=adrIn;
-    unsigned int color = img_in[adrIn];
-    unsigned int a = getA(color);
-    unsigned char color_byte = 0;
+    unsigned int color_byte = 0;
 
     if (i > 0 && i < width - 1 && j > 0 && j < height - 1) {
       const float SY[3][3]={{-1,-2,-1},{0,0,0},{1,2,1}};
@@ -119,9 +111,9 @@ __global__ void sobelKernel(unsigned int* img_in, unsigned int* img_out, int wid
 
       float color = sqrt(horizontal*horizontal + vertical*vertical);
       if (color > 255) color = 255;
-      color_byte = (unsigned char)color;
+      color_byte = (unsigned int)color;
     }
 
-    img_out[adrOut] = output(color_byte, color_byte, color_byte, a);
+    img_out[adrOut] = output(color_byte, color_byte, color_byte, getA(color););
   }
 }

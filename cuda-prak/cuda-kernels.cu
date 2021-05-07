@@ -20,9 +20,9 @@ __global__ void copyImgKernel(unsigned char* img_in, unsigned char* img_out, int
    }
 }
 
-__device__ unsigned char clamp_color(unsigned char color){
+__device__ unsigned char clamp_color(float color){
   if (color > 255) return 255;
-  return color;
+  return (unsigned char)color;
 }
 
 __global__ void linearTransformKernel(unsigned char* img_in, unsigned char* img_out, int width, int height, float alpha, float beta)
