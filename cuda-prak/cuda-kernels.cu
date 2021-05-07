@@ -24,7 +24,6 @@ __global__ void copyImgKernel(unsigned char* img_in, unsigned char* img_out, int
    }
 }
 
-
 // Hilfsfunktion Begrenzung Wertebereich Farbe
 __device__ unsigned char clamp_color(float color){
   if (color > 255) return 255;
@@ -56,7 +55,6 @@ __global__ void linearTransformKernel(unsigned char* img_in, unsigned char* img_
       img_out[adrOut+3] = a;
    }
 }
-
 
 __global__ void mirrorKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
@@ -95,7 +93,6 @@ __global__ void mirrorKernel(unsigned char* img_in, unsigned char* img_out, int 
   }
 }
 
-
 __global__ void bwKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
   // Stelle Pixel im Bild
@@ -124,7 +121,6 @@ __global__ void bwKernel(unsigned char* img_in, unsigned char* img_out, int widt
      img_out[adrOut+3] = a;
   }
 }
-
 
 __global__ void sobelKernel(unsigned char* img_in, unsigned char* img_out, int width, int height)
 {
